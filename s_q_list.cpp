@@ -1,3 +1,5 @@
+//vibe code ac hon nua, thuan toolbox
+
 #include <iostream>
 using namespace std;
 const int max=1000;
