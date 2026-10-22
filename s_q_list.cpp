@@ -1,5 +1,4 @@
-//vibe code ac hon nua, thuan toolbox
-
+//vibe code ac hon nua, thuan toolbox, toan struct va void, int main chua nghich
 #include <iostream>
 using namespace std;
 const int max=1000;
