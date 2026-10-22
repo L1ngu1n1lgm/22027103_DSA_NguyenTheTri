@@ -1,126 +1,143 @@
-/*
-Bai 1: Cai dat Stack so nguyen bang List (mang) va Linked List
-Stack hoat dong theo LIFO: phan tu vao sau thi ra truoc
-
-PHAN TICH DO PHUC TAP:
-1. Stack bang List (mang): dinh stack la cuoi mang a[n-1]
-   isEmpty : O(1)
-   push    : O(1) - ghi vao a[n], khong phai dich phan tu
-   pop     : O(1) - chi giam n
-   top     : O(1)
-   size    : O(1)
-   Memory: O(CAPACITY), bi gioi han so phan tu toi da
-
-2. Stack bang Linked List: dinh stack la head
-   isEmpty : O(1)
-   push    : O(1) - chen vao dau danh sach
-   pop     : O(1) - xoa node dau danh sach
-   top     : O(1)
-   size    : O(1) - luu bien dem n
-   Memory: O(n), khong gioi han, moi node ton them 1 con tro next
-*/
 #include <iostream>
 using namespace std;
+const int max=1000;
+struct list{
+    int data[max];
+    int size=0;
 
-const int CAPACITY = 1000;
-
-// ===== 1. STACK BANG LIST (MANG) =====
-int a[CAPACITY];
-int n = 0; // so phan tu trong stack
-
-bool isEmptyArr() { return n == 0; }
-
-int sizeArr() { return n; }
-
-void pushArr(int item) {
-    if (n >= CAPACITY) {
-        cout << "Stack day" << endl;
-        return;
+    bool Empty(){
+        return size==0;
     }
-    a[n] = item;
-    n++;
-}
-
-int popArr() {
-    if (isEmptyArr()) {
-        cout << "Stack rong" << endl;
-        return -1;
+    bool Full(){
+        return size==max;
+    } 
+    void addFirst(int v){
+        if(Full()){
+            return;
+        }
+        for(int i=size;i>0;i--){
+            data[i]=data[i-1];
+        }
+        data[0]=v;
+        size++;
     }
-    n--;
-    return a[n];
-}
-
-int topArr() {
-    if (isEmptyArr()) {
-        cout << "Stack rong" << endl;
-        return -1;
+    void addLast(int v){
+        if(Full()){
+            return;
+        }
+        data[size]=v;
+        size++;
     }
-    return a[n - 1];
-}
-
-// ===== 2. STACK BANG LINKED LIST =====
-struct Node {
-    int data;
-    Node *next;
+    void insertAfter(int pos, int v){
+        if(Full()){
+            return;
+        }
+        if(pos<1||pos>size){
+            return;
+        }
+        for(int i=size;i>pos;i--){
+            data[i]=data[i-1];
+        }
+        data[pos]=v;
+        size++;
+    }
+    void insertBefore(int pos, int v){
+        if(Full()){
+            return;
+        }
+        if(pos<1||pos>size){
+            return;
+        }
+        if(pos==1){
+            addFirst(v);
+        }
+        else{
+            insertAfter(pos-1,v);
+        }
+    }
+    void deleteFirst(){
+        if(Empty()){
+            return;
+        }
+        for(int i=0;i<size-1;i++){
+            data[i]=data[i+1];
+        }
+        size--;
+    }
+    void deleteLast(){
+        if(Empty()){
+            return;
+        }
+        size--;
+    }
+    void deleteAt(int pos){
+        if(Empty()){
+            return;
+        }
+        if(pos<1||pos>size){
+            return;
+        }
+        for(int i=pos-1;i<size-1;i++){
+            data[i]=data[i+1];
+        }
+        size--;
+    }
 };
-
-Node *head = NULL;
-int cnt = 0; // so phan tu trong stack
-
-bool isEmptyLL() { return head == NULL; }
-
-int sizeLL() { return cnt; }
-
-void pushLL(int item) {
-    Node *p = new Node;
-    p->data = item;
-    p->next = head; // node moi tro vao dinh cu
-    head = p;       // node moi thanh dinh
-    cnt++;
-}
-
-int popLL() {
-    if (isEmptyLL()) {
-        cout << "Stack rong" << endl;
-        return -1;
+struct Stack {
+    list L;
+    bool isEmpty(){
+        return L.Empty();
     }
-    Node *p = head;
-    int x = p->data;
-    head = head->next;
-    delete p;
-    cnt--;
-    return x;
-}
-
-int topLL() {
-    if (isEmptyLL()) {
-        cout << "Stack rong" << endl;
-        return -1;
+    void push(int Item){
+        L.addLast(Item);
     }
-    return head->data;
-}
-
-int main() {
-    int N;
-    cout << "Nhap so phan tu N: ";
-    cin >> N;
-    cout << "Nhap " << N << " phan tu: ";
-    for (int i = 0; i < N; i++) {
-        int x;
-        cin >> x;
-        pushArr(x);
-        pushLL(x);
+    int pop(){
+        if(isEmpty()){
+            return-1;
+        }
+        int lastItem=L.data[L.size-1];
+        L.deleteLast();
+        return lastItem;
     }
-
-    cout << "Stack bang List: size = " << sizeArr() << ", top = " << topArr() << endl;
-    cout << "Pop lan luot: ";
-    while (!isEmptyArr()) cout << popArr() << " ";
-    cout << endl;
-
-    cout << "Stack bang Linked List: size = " << sizeLL() << ", top = " << topLL() << endl;
-    cout << "Pop lan luot: ";
-    while (!isEmptyLL()) cout << popLL() << " ";
-    cout << endl;
-
+    int size(){
+        return L.size;
+    }
+    int top(){
+       if(isEmpty()){
+            return-1;
+        }
+        return L.data[L.size-1]; 
+    }
+};
+struct Queue {
+    list L;
+    bool isEmpty(){
+        return L.Empty();
+    }
+    void enqueue(int Item){
+        L.addLast(Item);
+    }
+    int dequeue(){
+        if(isEmpty()){
+            return-1;
+        }
+        int firstItem=L.data[0];
+        L.deleteFirst();
+        return firstItem;
+        
+    }
+    int peek(){
+        if(isEmpty()){
+            return-1;
+        }
+        return L.data[0];
+    }
+    int size(){
+        return L.size;
+    }
+};
+int main() 
+{
+   
     return 0;
 }
