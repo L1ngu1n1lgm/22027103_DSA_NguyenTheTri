@@ -1,3 +1,4 @@
+//thuan vibecode, va rat nhieu human slop
 #include <iostream>
 using namespace std;
 struct Node{
