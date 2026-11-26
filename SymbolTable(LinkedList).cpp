@@ -26,7 +26,6 @@ public:
     int size() const { return n; }
     bool isEmpty() const { return n == 0; }
 
-
     Value* get(const Key& key) {
         for (Node* x = head; x != nullptr; x = x->next)
             if (x->key == key) return &x->val;
@@ -34,7 +33,6 @@ public:
     }
 
     bool contains(const Key& key) { return get(key) != nullptr; }
-
 
     void put(const Key& key, const Value& val) {
         for (Node* x = head; x != nullptr; x = x->next) {
@@ -46,7 +44,6 @@ public:
         head = new Node(key, val, head);
         n++;
     }
-
 
     bool remove(const Key& key) {
         Node* prev = nullptr;
@@ -84,15 +81,13 @@ public:
 int main() {
     LinkedListST<std::string, int> st;
 
+
     std::string words[] = {"S", "E", "A", "R", "C", "H", "E", "X", "A", "M", "P", "L", "E"};
-    for (const auto& w : words) {
-        int* v = st.get(w);
-        st.put(w, v ? *v + 1 : 1);
-    }
+    for (int i = 0; i < 13; i++) st.put(words[i], i);
 
     std::cout << "size = " << st.size() << "\n";
     for (const auto& k : st.keys())
-        std::cout << k << " -> " << *st.get(k) << "\n";
+        std::cout << k << " " << *st.get(k) << "\n";
 
     st.remove("E");
     st.remove("S");
