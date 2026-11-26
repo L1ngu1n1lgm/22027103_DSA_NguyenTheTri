@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -64,13 +63,12 @@ public:
 
     void put(const Key& key, const Value& val) {
         int i = rank(key);
-        // key đã có -> cập nhật
         if (i < n && keysArr[i] == key) {
             vals[i] = val;
             return;
         }
         if (n == capacity) resize(2 * capacity);
-        // dịch phải để chừa chỗ tại vị trí i
+
         for (int j = n; j > i; j--) {
             keysArr[j] = keysArr[j - 1];
             vals[j] = vals[j - 1];
@@ -94,6 +92,7 @@ public:
         return true;
     }
 
+
     const Key& min() const {
         if (isEmpty()) throw std::underflow_error("ST rong");
         return keysArr[0];
@@ -102,11 +101,11 @@ public:
         if (isEmpty()) throw std::underflow_error("ST rong");
         return keysArr[n - 1];
     }
-    const Key& select(int k) const {   // key nhỏ thứ k (0-based)
+    const Key& select(int k) const {   
         if (k < 0 || k >= n) throw std::out_of_range("select: k khong hop le");
         return keysArr[k];
     }
-    // key lớn nhất <= key ; trả về false nếu không có
+
     bool floor(const Key& key, Key& out) const {
         int i = rank(key);
         if (i < n && keysArr[i] == key) { out = keysArr[i]; return true; }
@@ -114,6 +113,7 @@ public:
         out = keysArr[i - 1];
         return true;
     }
+
     bool ceiling(const Key& key, Key& out) const {
         int i = rank(key);
         if (i == n) return false;
@@ -121,33 +121,63 @@ public:
         return true;
     }
 
+    void deleteMin() {
+        if (isEmpty()) throw std::underflow_error("ST rong");
+        remove(min());
+    }
+    void deleteMax() {
+        if (isEmpty()) throw std::underflow_error("ST rong");
+        remove(max());
+    }
+
+
+    int size(const Key& lo, const Key& hi) const {
+        if (hi < lo) return 0;
+        int r = rank(hi) - rank(lo);
+        if (rank(hi) < n && keysArr[rank(hi)] == hi) r++;   
+        return r;
+    }
+
     std::vector<Key> keys() const {
         return std::vector<Key>(keysArr, keysArr + n);
+    }
+
+
+    std::vector<Key> keys(const Key& lo, const Key& hi) const {
+        std::vector<Key> result;
+        if (hi < lo) return result;
+        for (int i = rank(lo); i < n && !(hi < keysArr[i]); i++)
+            result.push_back(keysArr[i]);
+        return result;
     }
 };
 
 int main() {
     ArrayST<std::string, int> st;
 
+
     std::string words[] = {"S", "E", "A", "R", "C", "H", "E", "X", "A", "M", "P", "L", "E"};
-    for (const auto& w : words) {
-        int* v = st.get(w);
-        st.put(w, v ? *v + 1 : 1);
-    }
+    for (int i = 0; i < 13; i++) st.put(words[i], i);
+
 
     std::cout << "size = " << st.size() << "\n";
-    for (const auto& k : st.keys())          // in ra theo thứ tự tăng dần
-        std::cout << k << " -> " << *st.get(k) << "\n";
+    for (const auto& k : st.keys())          
+        std::cout << k << " " << *st.get(k) << "\n";
 
     std::cout << "\nmin = " << st.min() << ", max = " << st.max() << "\n";
-    std::cout << "rank(M) = " << st.rank("M") << "\n";
+    std::cout << "rank(M) = " << st.rank("M") << ", select(6) = " << st.select(6) << "\n";
     std::string f, c;
     if (st.floor("G", f)) std::cout << "floor(G) = " << f << "\n";
     if (st.ceiling("G", c)) std::cout << "ceiling(G) = " << c << "\n";
+    std::cout << "size(D, M) = " << st.size("D", "M") << ", keys(D, M) =";
+    for (const auto& k : st.keys("D", "M")) std::cout << " " << k;
+    std::cout << "\n";
 
+    st.deleteMin();
+    st.deleteMax();
     st.remove("E");
-    st.remove("S");
-    std::cout << "\nSau khi xoa E, S: size = " << st.size() << "\n";
-    std::cout << "contains(E)? " << (st.contains("E") ? "yes" : "no") << "\n";
+    std::cout << "\nSau deleteMin, deleteMax, remove(E): size = " << st.size() << ", keys =";
+    for (const auto& k : st.keys()) std::cout << " " << k;
+    std::cout << "\n";
     return 0;
 }
